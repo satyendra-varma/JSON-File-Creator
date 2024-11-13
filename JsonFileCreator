@@ -1,0 +1,102 @@
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Random;
+
+public class JSONFileGenerator {
+
+    public static void main(String[] args) {
+
+        int numberOfRows = 10_000_000;
+
+        JSONArray jsonArray = new JSONArray();
+
+        for (int i = 1; i <= numberOfRows; i++) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", i);
+            jsonObject.put("name", generateRandomName());
+            jsonObject.put("address", generateRandomAddress());
+            jsonObject.put("phone", generateRandomPhoneNumber());
+            jsonObject.put("email", generateRandomEmail(i));
+            jsonObject.put("description", generateRandomDescription());
+            jsonObject.put("preferences", generateRandomPreferences());
+            jsonObject.put("purchaseHistory", generateRandomPurchaseHistory());
+
+            jsonArray.put(jsonObject);
+
+            if (i % 100_000 == 0) {
+                appendToFile(jsonArray, "data.json");
+                jsonArray = new JSONArray();
+            }
+        }
+
+        appendToFile(jsonArray, "data.json");
+        System.out.println("Successfully wrote JSON data to data.json");
+    }
+
+    private static void appendToFile(JSONArray jsonArray, String filename) {
+        try (FileWriter file = new FileWriter(filename, true)) {
+            file.write(jsonArray.toString(2)); // Indent for readability
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String generateRandomName() {
+        String[] firstNames = {"John", "Jane", "Alex", "Chris", "Taylor", "Pat", "Jordan", "Morgan"};
+        String[] lastNames = {"Smith", "Johnson", "Brown", "Williams", "Jones", "Davis", "Clark", "Lewis"};
+        Random random = new Random();
+        return firstNames[random.nextInt(firstNames.length)] + " " + lastNames[random.nextInt(lastNames.length)];
+    }
+
+    private static String generateRandomAddress() {
+        String[] streets = {"Main St", "Second St", "Broadway", "Elm St", "Market St", "Oak St"};
+        String[] cities = {"New York", "Los Angeles", "Chicago", "Houston", "Phoenix"};
+        String[] states = {"NY", "CA", "IL", "TX", "AZ"};
+        Random random = new Random();
+        return random.nextInt(9999) + " " + streets[random.nextInt(streets.length)] + ", " 
+                + cities[random.nextInt(cities.length)] + ", " + states[random.nextInt(states.length)];
+    }
+
+    private static String generateRandomPhoneNumber() {
+        Random random = new Random();
+        return String.format("%03d-%03d-%04d", random.nextInt(1000), random.nextInt(1000), random.nextInt(10000));
+    }
+
+    private static String generateRandomEmail(int id) {
+        String[] domains = {"example.com", "mail.com", "sample.org", "demo.net"};
+        Random random = new Random();
+        return "user" + id + "@" + domains[random.nextInt(domains.length)];
+    }
+
+    private static String generateRandomDescription() {
+        return "Random Description " +
+               "Generated";
+    }
+
+    private static JSONArray generateRandomPreferences() {
+        JSONArray preferences = new JSONArray();
+        preferences.put("preference1");
+        preferences.put("preference2");
+        preferences.put("preference3");
+        return preferences;
+    }
+
+    private static JSONArray generateRandomPurchaseHistory() {
+        JSONArray purchaseHistory = new JSONArray();
+        for (int i = 0; i < 5; i++) {
+            JSONObject purchase = new JSONObject();
+            purchase.put("item", "Item " + i);
+            purchase.put("amount", new Random().nextInt(100));
+            purchaseHistory.put(purchase);
+        }
+        return purchaseHistory;
+    }
+
+<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version>
+</dependency>
